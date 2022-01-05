@@ -7,7 +7,6 @@ namespace AudioGame;
 public static class Math
 {
     private static Random rnd = new Random();
-    private static BinaryFormatter formatter = new BinaryFormatter();
 
     public static double absolute(double x)
     {
@@ -87,29 +86,15 @@ public static class Math
 
     public static string random_get_state()
     {
-        using (var stream = new MemoryStream())
-        {
-            try
-            {
-                formatter.Serialize(stream, rnd);
-                return Convert.ToBase64String(stream.ToArray());
-            }
-            catch
-            {
-                return String.Empty;
-            }
-        }
+        return Serialization.serialize(rnd);
     }
 
     public static bool random_set_state(string state)
     {
         try
         {
-            using (var stream = new MemoryStream(Convert.FromBase64String(state)))
-            {
-                rnd = (Random)formatter.Deserialize(stream);
-                return true;
-            }
+            rnd = (Random)Serialization.deserialize_object(state);
+            return true;
         }
         catch
         {
